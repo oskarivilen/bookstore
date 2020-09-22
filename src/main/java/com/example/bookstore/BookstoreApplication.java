@@ -9,6 +9,10 @@ import org.springframework.context.annotation.Bean;
 
 import com.example.bookstore.model.Book;
 import com.example.bookstore.model.BookRepository;
+import com.example.bookstore.model.Category;
+import com.example.bookstore.model.CategoryRepository;
+
+
 
 
 
@@ -22,14 +26,19 @@ public class BookstoreApplication {
 	}
 	
 	@Bean
-	public CommandLineRunner bookDemo(BookRepository repository) {
+	public CommandLineRunner bookDemo(BookRepository brepository, CategoryRepository crepository) {
 		return (args) -> {
 			log.info("save a couple of books");
-			repository.save(new Book(1, "Way of Kings", "Brandon Sanderson", 2002, "f24fw", 15));
-			repository.save(new Book(2, "Game of Thrones", "George RR Martin", 1991, "43Ks3", 20));	
+			crepository.save(new Category("Scifi"));
+			crepository.save(new Category("Fantasy"));
+			crepository.save(new Category("Crime"));
+			
+			
+			brepository.save(new Book(1, "Way of Kings", "Brandon Sanderson", 2002, "f24fw", 15, crepository.findByName("Fantasy").get(0)));
+			brepository.save(new Book(2, "Leviathan Awakes", "James S.A Corey", 2011, "43Ks3", 20, crepository.findByName("Scifi").get(0)));
 			
 			log.info("fetch all books");
-			for (Book book : repository.findAll()) {
+			for (Book book : brepository.findAll()) {
 				log.info(book.toString());
 			}
 

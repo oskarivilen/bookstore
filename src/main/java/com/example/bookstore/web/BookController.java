@@ -2,6 +2,8 @@ package com.example.bookstore.web;
 
 
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.example.bookstore.model.Book;
 import com.example.bookstore.model.BookRepository;
+import com.example.bookstore.model.CategoryRepository;
+
+
 
 
 
@@ -18,6 +23,8 @@ import com.example.bookstore.model.BookRepository;
 public class BookController {
 	@Autowired
 	private BookRepository repository; 
+	@Autowired
+	private CategoryRepository crepository; 
 	
     @RequestMapping(value= {"/", "/booklist"})
     public String bookList(Model model) {	
@@ -28,13 +35,10 @@ public class BookController {
     @RequestMapping(value = "/add")
     public String addBook(Model model){
     	model.addAttribute("book", new Book());
+    	model.addAttribute("categories", crepository.findAll());
         return "addstudent";
     }     
-    @RequestMapping(value = "/edit", method = RequestMethod.GET)
-    public String editBook(Long id, Model model){
-    	model.addAttribute("book", repository.findById(id));
-        return "editbook";
-    }   
+  
     
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(Book book){
@@ -47,4 +51,11 @@ public class BookController {
     	repository.deleteById(bookId);
         return "redirect:../booklist";
     }     
+    @RequestMapping(value = "/modify/{id}", method = RequestMethod.GET)
+    public String modifyBook(@PathVariable("id") Long bookId, Model model) {
+    	Optional<Book> book = repository.findById(bookId);
+    	model.addAttribute("book", book);
+    	model.addAttribute("categories", crepository.findAll());
+        return "modifybook";
+    }  
 }
